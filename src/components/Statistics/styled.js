@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
+
 export const StatisticsComponent = styled.div`
-    background-color: #fff;
+  height: 100vh;
 `;
-export const Span = styled.span`
-    color: black;
-`
+export const Review = styled.div`
+  display: flex;
+  flex-direction: column;
+`;

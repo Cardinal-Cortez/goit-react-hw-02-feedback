@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { Button, FeedbackComponent, FeedbackOptions } from "./styled";
+import { FeedbackOptions } from "components/FeedbackOptions";
 import { Statistics } from "components/Statistics";
-// import PropTypes from "prop-types";
+import { Section } from "components/Section";
+import { Notification } from "components/Notification";
+import PropTypes from "prop-types";
 
 export class Feedback extends Component {
   state = {
@@ -13,28 +15,21 @@ export class Feedback extends Component {
   countTotalFeedback = (value) => {
     this.setState((prevState) => ({ [value]: prevState[value] + 1 }));
   };
-countPositiveFeedbackPercentage = () => {
+  
+  countPositiveFeedbackPercentage = () => {
     const { good, neutral, bad } = this.state;
     const total = good + neutral + bad;
     return total > 0 ? Math.round((good / total) * 100) : 0;
   };
 
-
   render() {
     const { good, neutral, bad } = this.state;
     const total = good + neutral + bad;
-    const options = ['good', 'neutral', ' bad'];
-    const onLeaveFeedback = options.map(btn => (
-      <Button key={btn} onClick={() => this.countTotalFeedback(btn)}>
-        {btn}
-      </Button>));
+    const options = ['good', 'neutral', 'bad'];
     const positivePercentage = this.countPositiveFeedbackPercentage();
-    return (
-      <FeedbackComponent>
-        <h1>Pleace leave feedback</h1>
-        <FeedbackOptions>
-          {onLeaveFeedback}
-          </FeedbackOptions>
+    let content = <Notification message="There is no feedback" />;
+    if (total > 0) {
+      content = (
         <Statistics
           good={good}
           neutral={neutral}
@@ -42,11 +37,21 @@ countPositiveFeedbackPercentage = () => {
           total={total}
           positivePercentage={positivePercentage}
         />
-      </FeedbackComponent>
+      );
+    }
+    return (
+      <Section title="Please leave feedback">
+        <FeedbackOptions options={options} onLeaveFeedback={this.countTotalFeedback} />
+        {content}
+      </Section>
     );
   }
-}
 
-// Feedback.propTypes = {
-//   children: PropTypes.node.isRequired
-// }
+  static propTypes = {
+    good: PropTypes.number.isRequired,
+    neutral: PropTypes.number.isRequired,
+    bad: PropTypes.number.isRequired,
+    total: PropTypes.number.isRequired,
+    positivePercentage: PropTypes.number.isRequired,
+  };
+}
