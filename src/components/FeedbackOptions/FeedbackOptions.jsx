@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Options, Button } from "./styled";
+import PropTypes from 'prop-types';
 
 export class FeedbackOptions extends Component{
   render() {
@@ -15,3 +16,8 @@ export class FeedbackOptions extends Component{
     )
   }
 }
+
+FeedbackOptions.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onLeaveFeedback: PropTypes.func.isRequired,
+};

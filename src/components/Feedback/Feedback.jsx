@@ -3,7 +3,6 @@ import { FeedbackOptions } from "components/FeedbackOptions";
 import { Statistics } from "components/Statistics";
 import { Section } from "components/Section";
 import { Notification } from "components/Notification";
-import PropTypes from "prop-types";
 
 export class Feedback extends Component {
   state = {
@@ -12,10 +11,10 @@ export class Feedback extends Component {
     bad: 0
   };
 
-  countTotalFeedback = (value) => {
-    this.setState((prevState) => ({ [value]: prevState[value] + 1 }));
-  };
-  
+    countTotalFeedback = (option) => {
+      this.setState((prevState) => ({ [option]: prevState[option] + 1 }));
+    };
+
   countPositiveFeedbackPercentage = () => {
     const { good, neutral, bad } = this.state;
     const total = good + neutral + bad;
@@ -24,34 +23,28 @@ export class Feedback extends Component {
 
   render() {
     const { good, neutral, bad } = this.state;
-    const total = good + neutral + bad;
-    const options = ['good', 'neutral', 'bad'];
-    const positivePercentage = this.countPositiveFeedbackPercentage();
-    let content = <Notification message="There is no feedback" />;
-    if (total > 0) {
-      content = (
-        <Statistics
+    return (
+      <div>
+        <Section title="Please leave feedback">
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.onLeaveFeedback}
+          />
+        </Section>
+        <Section title="Statistics">
+          {this.countTotalFeedback() > 0 ? (
+          <Statistics
           good={good}
           neutral={neutral}
           bad={bad}
-          total={total}
-          positivePercentage={positivePercentage}
+          total={this.countTotalFeedback()}
+          positivePercentage={this.countPositiveFeedbackPercentage()}
         />
-      );
-    }
-    return (
-      <Section title="Please leave feedback">
-        <FeedbackOptions options={options} onLeaveFeedback={this.countTotalFeedback} />
-        {content}
-      </Section>
+          ) : (
+          <Notification message="There is no feedback yet" />  
+        )}
+        </Section>
+      </div>
     );
-  }
-
-  static propTypes = {
-    good: PropTypes.number.isRequired,
-    neutral: PropTypes.number.isRequired,
-    bad: PropTypes.number.isRequired,
-    total: PropTypes.number.isRequired,
-    positivePercentage: PropTypes.number.isRequired,
   };
 }
